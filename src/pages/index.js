@@ -4,14 +4,14 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const images = Array.from({ length: 10 }).map((_, index) => (
+  const images = Array.from({ length: 100 }).map((_, index) => (
     <img src="/lane.png" key={index} alt={`Image ${index}`} />
   ));
 
   return (
     <>
-      <main>
-        <div className="bg-white h-full w-full flex flex-row">{images}</div>
+      <main className="bg-white h-[100vh] w-[100vw] ">
+        <div className="flex flex-row absolute bottom-0">{images}</div>
       </main>
     </>
   );

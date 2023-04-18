@@ -31,7 +31,7 @@ export default function Home() {
 
   useEffect(() => {
     const newSpikes = [];
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 100; i++) {
       const left = Math.random() * 10000; // Random position between 0 and 100%
       newSpikes.push({ left });
     }
@@ -41,27 +41,31 @@ export default function Home() {
   // for bikes
   const [position, setPosition] = useState(0);
   const [rotate, setRotate] = useState(0);
-  const [dock, setDock] = useState(100);
+  const [dock, setDock] = useState(12.5);
+
+  const dinoRef = useRef()
 
   const moveUp = () => {
     setPosition(position - 100);
     setRotate(rotate - 15);
   };
   const moveDown = () => {
-    setDock(50)
+    setDock(8)
+    dinoRef.current.style.marginTop = '4.25vh';
   };
 
   useEffect(() => {
     let timeout;
-    if (position < 0 || dock < 51) {
+    if (position < 0 || dock < 12.5) {
       timeout = setTimeout(() => {
         setPosition(0);
         setRotate(0);
-        setDock(100)
+        setDock(12.5);
+        dinoRef.current.style.marginTop = '0';
       }, 500);
     }
     return () => clearTimeout(timeout);
-  }, [position]);
+  }, [position, dock]);
 
 
   // for moving screen
@@ -72,13 +76,39 @@ export default function Home() {
   useEffect(() => {
     function animate() {
       if (isMoving) {
-        setMovePosition(prevMovePosition => prevMovePosition - 20);
+        setMovePosition(prevMovePosition => prevMovePosition - 10);
         requestAnimationFrame(animate);
       }
     }
 
     animate();
   }, [isMoving]);
+
+  // for contact
+  const div1Ref = useRef(null);
+  const div2Ref = useRef(null);
+
+  useEffect(() => {
+    const div1 = div1Ref.current;
+    const div2 = div2Ref.current;
+
+    // Check if the two div elements are in contact by comparing their bounding rectangles
+    const checkDivsContact = () => {
+      if (div1?.getBoundingClientRect().right >= div2?.getBoundingClientRect().left) {
+        console.log('The two divs are in contact!');
+      }
+    };
+    
+
+    // Call the checkDivsContact function on mount and on resize
+    checkDivsContact();
+    // window.addEventListener('resize', checkDivsContact);
+
+    // // Cleanup the event listener on unmount
+    // return () => {
+    //   window.removeEventListener('resize', checkDivsContact);
+    // };
+  }, []);
 
   return (
     <>
@@ -101,15 +131,17 @@ export default function Home() {
 
         {/* Spikes */}
         {Spikes.map((spike, index) => (
-          <div className="absolute flex flex-row bottom-6 w-[50px] h-[80px]">
+          <div className="flex flex-row">
             <img
+            ref={div2Ref}
               key={index}
               src="/spike2.png"
               style={{
+                position: "absolute",
                 left: `${spike.left}%`,
                 marginRight: "200em",
               }}
-              className="w-[50px] h-[80px]"
+              className="w-[6.25vw] h-[10vh] top-[88vh]"
             />
           </div>
         ))}
@@ -121,13 +153,13 @@ export default function Home() {
       </main>
 
       {/* dino */}
-      <div className=" pt-[30vh]">
+      <div ref={div1Ref} className=" pt-[30vh]">
       <div
-        className="absolute w-[155px] left-[20vw] top-[77vh]"
+        className="absolute w-[19.375vw] left-1 top-1"
         style={{ transform: `translateY(${position}px) rotate(${rotate}deg)` }}
       >
-        <img src="/dino.png" alt="dino" className="w-[50px] fixed left-11" style={{height: `${dock}px`}}/>
-        <img src="/bike.png" alt="bike" className="w-[150px] h-[80px] fixed top-11"/>
+        <img ref={dinoRef} src="/dino.png" alt="dino" className="w-[6.25vw] h- fixed left-[25.5vw] top-[84.4vh]" style={{height: `${dock}vh`}}/>
+        <img src="/bike.png" alt="bike" className="w-[18.75vw] h-[10vh] fixed left-[20vw] top-[90vh]"/>
       </div>
     </div>
 

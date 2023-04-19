@@ -6,6 +6,19 @@ import { GiPistolGun } from "react-icons/gi/index"
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  // scoreboard
+  const [Score, setScore] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setScore(Score + 121);
+    }, 0.5);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [Score]);
+
   // for lanes
   const lanes = Array.from({ length: 1000 }).map((_, index) => (
     <img src="/lane.png" key={index} alt={`Image ${index}`} />
@@ -31,8 +44,8 @@ export default function Home() {
 
   useEffect(() => {
     const newSpikes = [];
-    for (let i = 0; i < 100; i++) {
-      const left = Math.random() * 10000; // Random position between 0 and 100%
+    for (let i = 0; i < 5000; i++) {
+      const left = Math.random() * 1000000; // Random position between 0 and 100%
       newSpikes.push({ left });
     }
     setSpikes(newSpikes);
@@ -46,9 +59,26 @@ export default function Home() {
   const dinoRef = useRef()
 
   const moveUp = () => {
-    setPosition(position - 100);
-    setRotate(rotate - 15);
+    setPosition(position - 150);
+    // setRotate(rotate - 15);
   };
+
+  // for arrow key
+  useEffect(() => {
+    const handleArrowKeyUp = (event) => {
+      if (event.keyCode === 38) {
+        setPosition(position - 150);
+        console.log('Arrow Up key pressed');
+      }
+    };
+
+    window.addEventListener('keyup', handleArrowKeyUp);
+
+    // return () => {
+    //   window.removeEventListener('keyup', handleArrowKeyUp);
+    // };
+  }, []);
+
   const moveDown = () => {
     setDock(8)
     dinoRef.current.style.marginTop = '4.25vh';
@@ -59,10 +89,11 @@ export default function Home() {
     if (position < 0 || dock < 12.5) {
       timeout = setTimeout(() => {
         setPosition(0);
-        setRotate(0);
+        // setRotate(0);
         setDock(12.5);
         dinoRef.current.style.marginTop = '0';
-      }, 500);
+      }, 1500);
+      
     }
     return () => clearTimeout(timeout);
   }, [position, dock]);
@@ -75,9 +106,13 @@ export default function Home() {
 
   useEffect(() => {
     function animate() {
-      if (isMoving) {
-        setMovePosition(prevMovePosition => prevMovePosition - 10);
+      if (isMoving && Score < 5000) {
+        setMovePosition(prevMovePosition => prevMovePosition - 15);
         requestAnimationFrame(animate);
+      } else {
+        setMovePosition(prevMovePosition => prevMovePosition - 150);
+        requestAnimationFrame(animate);
+        console.log('faster')
       }
     }
 
@@ -112,6 +147,18 @@ export default function Home() {
 
   return (
     <>
+  {/* scoreboard */}
+  <div className={`${inter} scoreBoard absolute flex flex-row justify-around py-6 px-12 `}>
+    <div className="mr-3 fixed left-[5vw] text-3xl z-[999999]">
+      <span className="mr-2">High Score:</span>
+      <span>200000</span>
+    </div>
+    <div className="mr-3 fixed right-[5vw] text-3xl z-[999999]">
+      <span className="mr-2">Score:</span>
+      <span>{Score}</span>
+    </div>
+  </div>
+    {/* main */}
       <main style={{transform: `translateX(${MovePosition}px)`,}} className='main bg-white h-[100vh] w-[100vw] ' ref={moveDivRef}>
         {/* clouds */}
         {clouds.map((cloud, index) => (
@@ -141,7 +188,7 @@ export default function Home() {
                 left: `${spike.left}%`,
                 marginRight: "200em",
               }}
-              className="w-[6.25vw] h-[10vh] top-[88vh]"
+              className="w-[1.125vw] h-[10vh] top-[88vh]"
             />
           </div>
         ))}
@@ -158,8 +205,8 @@ export default function Home() {
         className="absolute w-[19.375vw] left-1 top-1"
         style={{ transform: `translateY(${position}px) rotate(${rotate}deg)` }}
       >
-        <img ref={dinoRef} src="/dino.png" alt="dino" className="w-[6.25vw] h- fixed left-[25.5vw] top-[84.4vh]" style={{height: `${dock}vh`}}/>
-        <img src="/bike.png" alt="bike" className="w-[18.75vw] h-[10vh] fixed left-[20vw] top-[90vh]"/>
+        <img ref={dinoRef} src="/dino.png" alt="dino" className="lg:w-[3vw] w-[6.25vw] h- fixed lg:left-[24.3vw] left-[25.5vw] top-[84.4vh]" style={{height: `${dock}vh`}}/>
+        <img src="/bike.png" alt="bike" className="lg:w-[12vw] w-[18.75vw] h-[10vh] fixed left-[20vw] top-[90vh]"/>
       </div>
     </div>
 

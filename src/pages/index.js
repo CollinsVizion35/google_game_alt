@@ -107,10 +107,10 @@ export default function Home() {
   useEffect(() => {
     function animate() {
       if (isMoving && Score < 5000) {
-        setMovePosition(prevMovePosition => prevMovePosition - 15);
+        setMovePosition(prevMovePosition => prevMovePosition - 20);
         requestAnimationFrame(animate);
       } else {
-        setMovePosition(prevMovePosition => prevMovePosition - 150);
+        setMovePosition(prevMovePosition => prevMovePosition - 100);
         requestAnimationFrame(animate);
         console.log('faster')
       }
